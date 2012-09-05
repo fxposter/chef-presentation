@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>Infrastructure as Code</title>
+
+    <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+    <meta name="author" content="Hakim El Hattab">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <script>
+      // If the query includes 'print-pdf' we'll use the PDF print sheet
+      document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="reveal">
+
+      <!-- Used to fade in a background when a specific slide state is reached -->
+      <div class="state-background"></div>
+
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+        <section data-state="intro">
+          <h1>Chef</h1>
+          <h3>Infrastructure as Code</h3>
+        </section>
+
+        <section>
+          <h2>Who Am I?</h2>
+          <p>Pavel Forkert</p>
+          <p>Ruby Developer @ Wix System Team</p>
+          <p>Travis CI commiter</p>
+          <p>Over 3 years of Ruby and Rails experience</p>
+          <ul>
+            <li><a href="http://twitter.com/fxposter">@fxposter</a></li>
+            <li><a href="https://github.com/fxposter">github.com/fxposter</a></li>
+            <li><a href="http://blog.fxposter.org">blog.fxposter.org</a></li>
+            <li><a href="mailto:fxposter@gmail.com">fxposter@gmail.com</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>What is Chef</h2>
+          <p class="with-highlights">
+             <strong>Chef is an open-source systems integration framework</strong> built specifically
+             for automating the cloud. No matter how complex the realities of your business,
+             <strong>Chef makes it easy to deploy servers and scale applications</strong> throughout your entire infrastructure.
+             Because it combines the fundamental elements of configuration management and service
+             oriented architectures <strong>with the full power of Ruby</strong>, Chef makes it easy to create an elegant,
+             fully automated infrastructure.
+          </p>
+          <p><small><a href="http://opscode.com/chef">http://opscode.com/chef</a></small></p>
+        </section>
+        <section>
+          <h2>Chef Core Principles</h2>
+          <ul>
+            <li>Idempotence</li>
+            <li>Thick Clients, Thin Server</li>
+            <li>Order Matters</li>
+            <li>Reasonability</li>
+            <li>...</li>
+            <li>Ruby everywhere</li>
+            <li>Configuration as code</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Chef Core Components</h2>
+          <ul>
+            <li class="fragment">
+              Nodes (run list, attributes)
+              <ul>
+                <li>Run List</li>
+                <li>Attributes</li>
+              </ul>
+            </li>
+            <li class="fragment">
+              Roles
+              <ul>
+                <li>Run List</li>
+                <li>Attributes</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Role</h2>
+<pre><code class="ruby">name "webserver"
+description "The base role for systems that serve HTTP traffic"
+run_list "recipe[apache2]", "recipe[apache2::mod_ssl]", "role[monitor]"
+env_run_lists "prod" => ["recipe[apache2]"], "staging" => ["recipe[apache2::staging]"], "_default" => []
+default_attributes "apache2" => { "listen_ports" => [ "80", "443" ] }
+override_attributes "apache2" => { "max_children" => "50" }</code></pre>
+        </section>
+
+        <section>
+          <h2>Chef Core Components</h2>
+          <ul>
+            <li>
+              Cookbooks
+              <ul>
+                <li class="fragment">Metadata (info, deps)</li>
+                <li class="fragment">Resources</li>
+                <li class="fragment">Providers</li>
+                <li class="fragment">Recipes</li>
+                <li class="fragment">Data Bags</li>
+                <li class="fragment">Environments</li>
+                <li class="fragment">Definitions</li>
+                <li class="fragment">Libraries</li>
+                <li class="fragment">Files (per platform)</li>
+                <li class="fragment">Templates (per platform)</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section data-state="core-components">
+          <h2>Chef Core Components</h2>
+          <img src="http://wiki.opscode.com/download/attachments/19923532/chef-basics-cookbook.png">
+        </section>
+
+        <section>
+          <h2>Cookbook</h2>
+          <pre><code class="bash">cookbook/
+  attributes/
+  definitions/
+  files/
+  libraries/
+  providers/
+  recipes/
+  resources/
+  templates/
+  metadata.rb
+  README.rdoc</code></pre>
+        </section>
+
+
+
+        <section>
+          <h2>Resource</h2>
+          <pre><code class="ruby">user "sam" do
+  home "/home/sam"
+  shell "/bin/zsh"
+  comment "Sam loves DevOps"
+  action :create
+end</code></pre>
+        </section>
+
+        <section>
+          <h2>Chef Core Components</h2>
+          <ul>
+            <li>Knife</li>
+            <li>Ohai</li>
+            <li>Chef Solo</li>
+            <li>Chef Server + Chef Client</li>
+            <li>Shef</li>
+          </ul>
+        </section>
+
+        <section>
+          <h1 style="margin-top: 25%">How to start</h1>
+        </section>
+
+        <section>
+          <h2>Chef Repo</h2>
+          <pre><code class="bash">chef-repo/
+  certificates/
+  config/
+  cookbooks/
+  data_bags/
+  environments/
+  roles/
+  Rakefile</code></pre>
+          <p><small><a href="https://github.com/opscode/chef-repo">https://github.com/opscode/chef-repo</a></small></p>
+        </section>
+
+        <section>
+          <h2>Adding cookbooks</h2>
+          <pre><code class="bash">gem install chef
+knife cookbook site install nginx -o cookbooks
+knife cookbook site install mysql -o cookbooks
+gem install knife-github-cookbooks
+knife cookbook github install fnichol/chef-rvm/v0.9.0 -o /path/to/cookbooks
+knife cookbook github install fnichol/chef-rvm_passenger/v0.8.2 -o /path/to/cookbooks</code></pre>
+        </section>
+
+        <section>
+          <!-- <h2>Chef Repo</h2> -->
+          <pre><code class="ruby">name "rvm"
+description "rvm configuration for rails applcations deployment"
+default_attributes({
+  :rvm => {
+    :group_users => ["www-data"],
+    :default_ruby => "system",
+    :rubies => ["ruby-1.9.3-p194"],
+    :rvmrc => {
+      :rvm_gemset_create_on_use_flag => 1,
+      :rvm_project_rvmrc => 1,
+      :rvm_trust_rvmrcs_flag => 1
+    },
+    :global_gems => [
+      { :name => "bundler", :version => "1.2.0" },
+      { :name => "rake", :version => "0.9.2.2" }
+    ]
+  },
+  :rvm_passenger => {
+    :rvm_ruby => "ruby-1.9.3-p194@passenger"
+  }
+})
+run_list "recipe[rvm::system]", "recipe[rvm_passenger::nginx]"
+</code></pre>
+        </section>
+
+        <section>
+          <h2>My App Cookbook</h2>
+          <h4>
+            For now, it's difficult to properly deploy application with RVM using chef.
+            You may use capistrano for deployment process.
+          </h4>
+          <h2 class="fragment">But</h2>
+          <h3 class="fragment">I'm going to opensource something very soon...</h3>
+        </section>
+
+        <section>
+          <h2>RVM Deploy</h2>
+          <pre><code class="ruby">deploy_root = "/opt/blog"
+
+template "/etc/nginx/sites-available/blog" do
+  source "site.erb"
+  owner "root"
+  variables :host => "blog.#{node[:fqdn]}", :root => "#{deploy_root}/current/public"
+  notifies :restart, resources(:service => "nginx")
+end
+
+nginx_site "blog"
+
+rails_application "blog" do
+  deploy_to deploy_root
+  repository "git@github.com:my/blog.git"
+  database "blog"
+  symlinks "config/settings.yml" => "config/settings.yml"
+  ruby "ruby-1.9.3-p194@blog"
+end</code></pre>
+        </section>
+
+        <section>
+          <h2>Node lyfecycle</h2>
+          <ul>
+            <li>
+              Bootstrap
+              <ul>
+                <li>for Chef Solo</li>
+                <li>for Chef Server</li>
+              </ul>
+            </li>
+            <li>
+              Provision
+              <ul>
+                <li>Manual</li>
+                <li>Automatic</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h1 style="margin-top: 25%">Bootstrap</h1>
+        </section>
+
+        <section>
+          <h2>Chef Solo</h2>
+          <pre><code class="bash">gem install knife-solo
+knife kitchen my-chef-repo
+knife prepare fxposter@192.168.1.42
+echo '{ "run_list": ["role[rvm]", "recipe[mysql]", "recipe[my_app]"] }' > nodes/192.168.1.42.json
+knife cook fxposter@192.168.1.42
+</code></pre>
+          <p><small>Or, you can look at <a href="https://github.com/leonid-shevtsov/cuoco">https://github.com/leonid-shevtsov/cuoco</a> by Leonid Shevtsov, which does basically the same thing.</small></p>
+          <p><small>Do not use Chef Solo without one of these (or similar) tools - it's not worth it at all, if you will setup uploading cookbook to the server yourself.</small></p>
+        </section>
+
+        <section>
+          <h2>Chef Server</h2>
+          <pre><code class="bash">knife bootstrap 192.168.1.42 -x fxposter
+  -P password -r 'role[rvm],recipe[mysql],recipe[my_app]'
+  -d ubuntu12.04 -N fxposter.org
+</code></pre>
+        </section>
+
+        <section>
+          <h2>Differences</h2>
+          <ul>
+            <li>Chef Server provides a lot of APIs, for example, Search API</li>
+            <li>Chef Server solves problem of getting cookbook to your nodes</li>
+          </ul>
+        </section>
+
+        <section>
+          <h1 style="margin-top: 25%">Provision</h1>
+        </section>
+
+        <section>
+          <h2>Manual</h2>
+          <p>
+            Manually upload cookbooks to node with Chef Solo, or ssh to node and
+            run <code>chef-client</code> when using Chef Server.
+          </p>
+          <p><small>PS. Nobody really uses Chef Server with such configuration.</small></p>
+          <p><small>
+            PPS. Chef Solo in this configuration is very similar to Capistrano,
+            especially if you use chef deploy.
+          </small></p>
+        </section>
+
+        <section>
+          <h2>Automatic</h2>
+          <p>
+            Run <code>chef-client</code> every N minutes (usually 15),
+            or write a script for chef-solo, which would download repository and run it using cron.
+          </p>
+          <p><small>PS. I think, that in this configuration, Chef Server is the only way to go.</small></p>
+        </section>
+
+        <section>
+          <h2>Summary</h2>
+          <p>
+            Use Chef Server with automatic provisioning if you are a big company,
+            or have a big project, which needs lots of servers.
+          </p>
+          <p>
+            User Chef Solo with manual provisioning when you want to setup a couple of servers,
+            you will be able to switch to Chef Server later.
+          </p>
+        </section>
+
+        <section>
+          <h1 style="margin-top: 25%">One more thing...</h1>
+        </section>
+
+        <section>
+          <h2>Vagrant</h2>
+          <p>Create and configure lightweight, reproducible, and portable development environments.</p>
+          <p><small><a href="http://vagrantup.com/">http://vagrantup.com/</a></small></p>
+        </section>
+
+        <section>
+          <h2>Vagrant</h2>
+          <p>
+            If you want to get in touch with all described technologies,
+            especially Chef Solo - just use Vagrant, you will not need to setup anything,
+            Vagrant uses VirtualBox and there are a lot of VMs for it with
+            different operating systems, where Chef Solo will work out of the box.
+          </p>
+          <p>It is also awesome for testing your cookbooks.</p>
+        </section>
+
+        <section>
+          <h1 style="margin-top: 25%">Thank you</h1>
+        </section>
+
+        <section>
+          <h2>Links</h2>
+          <ul>
+            <li><a href="http://wiki.opscode.com/display/chef/Home">http://wiki.opscode.com/display/chef/Home</a> - Chef Wiki</li>
+            <li><a href="http://vagrantup.com/">http://vagrantup.com/</a></li>
+            <li><a href="https://github.com/opscode-cookbooks">https://github.com/opscode-cookbooks</a> - cookbooks by Opscode, Chef's creators</li>
+            <li><a href="https://github.com/cookbooks">https://github.com/cookbooks</a> - community cookbooks</li>
+            <li><a href="http://community.opscode.com/cookbooks">http://community.opscode.com/cookbooks</a></li>
+          </ul>
+        </section>
+      </div>
+
+      <!-- The navigational controls UI -->
+      <aside class="controls">
+        <a class="left" href="#">&#x25C4;</a>
+        <a class="right" href="#">&#x25BA;</a>
+        <a class="up" href="#">&#x25B2;</a>
+        <a class="down" href="#">&#x25BC;</a>
+      </aside>
+
+      <!-- Presentation progress bar -->
+      <div class="progress"><span></span></div>
+
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.min.js"></script>
+
+    <script>
+
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+
+        theme: Reveal.getQueryHash().theme || 'default', // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/linear(2d)
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+          { src: 'lib/js/highlight.js', async: true, callback: function() { window.hljs.initHighlightingOnLoad(); } },
+          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'lib/js/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'lib/js/data-markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: '/socket.io/socket.io.js', async: true, condition: function() { return window.location.host === 'localhost:1947'; } },
+          { src: 'plugin/speakernotes/client.js', async: true, condition: function() { return window.location.host === 'localhost:1947'; } },
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>

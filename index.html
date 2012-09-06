@@ -59,6 +59,10 @@
         </section>
 
         <section>
+          <h1 style="margin-top: 25%">Theory</h1>
+        </section>
+
+        <section>
           <h2>What is Chef</h2>
           <p class="with-highlights">
              <strong>Chef is an open-source systems integration framework</strong> built specifically
@@ -70,114 +74,365 @@
           </p>
           <p><small><a href="http://opscode.com/chef">http://opscode.com/chef</a></small></p>
         </section>
+
         <section>
-          <h2>Chef Core Principles</h2>
+          <h2>Core Principles</h2>
           <ul>
             <li>Idempotence</li>
             <li>Thick Clients, Thin Server</li>
             <li>Order Matters</li>
             <li>Reasonability</li>
-            <li>...</li>
             <li>Ruby everywhere</li>
             <li>Configuration as code</li>
           </ul>
         </section>
+
         <section>
-          <h2>Chef Core Components</h2>
+          <h1 style="margin-top: 25%">Core Components</h1>
+        </section>
+
+        <section>
+          <h2>Cookbooks</h2>
           <ul>
-            <li class="fragment">
-              Nodes (run list, attributes)
-              <ul>
-                <li>Run List</li>
-                <li>Attributes</li>
-              </ul>
-            </li>
-            <li class="fragment">
-              Roles
-              <ul>
-                <li>Run List</li>
-                <li>Attributes</li>
-              </ul>
-            </li>
+            <li>Fundamental unit of distribution in Chef</li>
+            <li>Encapsulate some "resource"</li>
+            <li>Easily shareable</li>
           </ul>
+          <img style="background-color: #FFFFFF" src="http://wiki.opscode.com/download/attachments/19923532/chef-basics-cookbook.png">
         </section>
 
         <section>
-          <h2>Role</h2>
-<pre><code class="ruby">name "webserver"
-description "The base role for systems that serve HTTP traffic"
-run_list "recipe[apache2]", "recipe[apache2::mod_ssl]", "role[monitor]"
-env_run_lists "prod" => ["recipe[apache2]"], "staging" => ["recipe[apache2::staging]"], "_default" => []
-default_attributes "apache2" => { "listen_ports" => [ "80", "443" ] }
-override_attributes "apache2" => { "max_children" => "50" }</code></pre>
-        </section>
-
-        <section>
-          <h2>Chef Core Components</h2>
+          <h2>Metadata</h2>
           <ul>
-            <li>
-              Cookbooks
-              <ul>
-                <li class="fragment">Metadata (info, deps)</li>
-                <li class="fragment">Resources</li>
-                <li class="fragment">Providers</li>
-                <li class="fragment">Recipes</li>
-                <li class="fragment">Data Bags</li>
-                <li class="fragment">Environments</li>
-                <li class="fragment">Definitions</li>
-                <li class="fragment">Libraries</li>
-                <li class="fragment">Files (per platform)</li>
-                <li class="fragment">Templates (per platform)</li>
-              </ul>
-            </li>
+            <li>Information about the package</li>
+            <li>Dependencies</li>
+            <li>OS support</li>
           </ul>
-        </section>
+          <pre><code class="ruby"># cookbooks/blog/metadata.rb
+maintainer       "Pavel Forkert"
+maintainer_email "fxposter@gmail.com.com"
+description      "Provides libraries for deploying RVM apps"
+version          "0.0.1"
 
-        <section data-state="core-components">
-          <h2>Chef Core Components</h2>
-          <img src="http://wiki.opscode.com/download/attachments/19923532/chef-basics-cookbook.png">
-        </section>
-
-        <section>
-          <h2>Cookbook</h2>
-          <pre><code class="bash">cookbook/
-  attributes/
-  definitions/
-  files/
-  libraries/
-  providers/
-  recipes/
-  resources/
-  templates/
-  metadata.rb
-  README.rdoc</code></pre>
-        </section>
-
-
-
-        <section>
-          <h2>Resource</h2>
-          <pre><code class="ruby">user "sam" do
-  home "/home/sam"
-  shell "/bin/zsh"
-  comment "Sam loves DevOps"
-  action :create
+%w(rvm rvm_passenger).each do |cookbook|
+  depends cookbook
 end</code></pre>
         </section>
 
         <section>
-          <h2>Chef Core Components</h2>
+          <h2>Attributes</h2>
           <ul>
-            <li>Knife</li>
-            <li>Ohai</li>
-            <li>Chef Solo</li>
-            <li>Chef Server + Chef Client</li>
-            <li>Shef</li>
+            <li>Node data such as the IP address, hostname, loaded kernel modules, version of programming languages, etc</li>
+            <li>4 types: default, normal, override, automatic</li>
+          </ul>
+          <pre><code class="ruby"># cookbooks/blog/attributes/default.rb
+default["blog"]["repo"] = "git://github.com/fxposter/blog.git"
+default["blog"]["deployer"] = "fxposter"</code></pre>
+        </section>
+
+        <section>
+          <h2>Resources</h2>
+          <ul>
+            <li>Represent a piece of system state</li>
+            <li>Usually a cross platform abstraction of the thing you're configuring</li>
+          </ul>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td>Cookbook File</td>
+                <td>Cron</td>
+                <td>Deploy</td>
+                <td>Directory</td>
+              </tr>
+              <tr>
+                <td>Env</td>
+                <td>Erlang Call</td>
+                <td>Execute</td>
+                <td>File</td>
+              </tr>
+              <tr>
+                <td>Remote Directory</td>
+
+                <td>Group</td>
+                <td>HTTP Request</td>
+                <td>Ifconfig</td>
+              </tr>
+              <tr>
+                <td>Link</td>
+                <td>Log</td>
+                <td>Mdadm</td>
+                <td>Mount</td>
+              </tr>
+              <tr>
+                <td>PowerShell Script</td>
+                <td>Ohai</td>
+                <td>Package</td>
+                <td>Git</td>
+              </tr>
+              <tr>
+                <td>Remote File</td>
+                <td>Route</td>
+                <td>Ruby Block</td>
+                <td>SCM</td>
+              </tr>
+              <tr>
+                <td>Script</td>
+                <td>Service</td>
+                <td>Subversion</td>
+                <td>Template</td>
+              </tr>
+              <tr>
+                <td>User</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section>
+          <h2>Providers</h2>
+          <ul>
+            <li>Underlying implementation of a given resource</li>
+            <li>Can be platform-specific</li>
+            <li>Compare current state of the system to resource and make changes to the state</li>
           </ul>
         </section>
 
         <section>
-          <h1 style="margin-top: 25%">How to start</h1>
+          <h2>LWRP</h2>
+          <p>Lightweight Resources and Providers</p>
+          <p>DSL for describing resources and providers</p>
+        </section>
+
+        <section>
+          <h2>Recipes</h2>
+          <ul>
+            <li>Encapsulate collections of resources which are executed in the order they are defined</li>
+            <li>This is where you will start to write code</li>
+          </ul>
+
+          <pre><code class="ruby"># cookbooks/blog/recipes/default.rb
+mysql_db "blog"
+
+template "/opt/blog/shared/config/database.yml" do
+  source "database.yml.erb"
+  owner node[:blog][:deployer]
+  variables :database => "blog", :host => node[:fqdn]
+end
+
+deploy_revision "/opt/blog" do
+  repo node[:blog][:repo]
+  user node[:blog][:deployer]
+  symlinks "config/database.yml" => "config/database.yml"
+  migrate true
+  environment "RAILS_ENV" => "production",
+              "RACK_ENV" => "production"
+end</code></pre>
+        </section>
+
+        <section>
+          <h2>Definitions</h2>
+          <ul>
+            <li>Encapsulate collections of resources just like recipes</li>
+            <li>Can have params</li>
+            <li>Are replaced by the resources they contain, when called from recipe</li>
+          </ul>
+
+          <pre><code class="ruby"># cookbooks/blog/definitions/application.rb
+define :application, :user => "fxposter" do
+  mysql_db params[:name]
+
+  template "/opt/#{params[:name]}/shared/config/database.yml" do
+    source "database.yml.erb"
+    owner params[:user]
+    valiables :database => params[:name], :host => node[:fqdn]
+  end
+
+  deploy_revision "/opt/#{params[:name]}" do
+    repo params[:repo]
+    user params[:user]
+  end
+end</code></pre>
+        </section>
+
+        <section>
+          <h2>Libraries</h2>
+          <ul>
+            <li>Plain Ruby</li>
+            <li>Managing your code in your way</li>
+            <li>Extending Chef</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Files</h2>
+          <ul>
+            <li>Plain files</li>
+            <li>No preprocessing</li>
+            <li>Per platform</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Templates</h2>
+          <ul>
+            <li>ERB</li>
+            <li>Per platform</li>
+          </ul>
+          <pre><code class="ruby"># cookbooks/blog/recipes/default.rb
+template "/opt/blog/shared/config/database.yml" do
+  source "database.yml.erb"
+  owner params[:user]
+  valiables :database => "blog"
+end</code></pre>
+          <pre><code class="erb yaml"># cookbooks/blog/templates/default/database.yml.erb
+production:
+  adapter: mysql2
+  database: <%= @database %></code></pre>
+        </section>
+
+        <section>
+          <h2>Recap</h2>
+          <ul>
+            <li>
+              Cookbooks
+              <ul>
+                <li>Metadata</li>
+                <li>Attributes</li>
+                <li>Resources</li>
+                <li>Providers</li>
+                <li>Recipes</li>
+                <li>Definitions</li>
+                <li>Libraries</li>
+                <li>Files</li>
+                <li>Templates</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Nodes</h2>
+          <ul>
+            <li>Host that runs the Chef client</li>
+            <li>Attributes</li>
+            <li>Run List</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Roles</h2>
+          <ul>
+            <li>Grouping similar features of similar nodes</li>
+            <li>Attributes</li>
+            <li>Run List</li>
+          </ul>
+          <pre><code class="ruby"># roles/webserver.rb
+name "webserver"
+description "The base role for systems that serve HTTP traffic"
+run_list "recipe[apache2]", "recipe[apache2::mod_ssl]",
+         "role[monitor]"
+default_attributes "apache2" => {
+  "listen_ports" => [ "80", "443" ]
+}
+override_attributes "apache2" => {
+  "max_children" => "50"
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>Data Bags</h2>
+          <ul>
+            <li>Provide an arbitrary stores of globally available JSON data</li>
+          </ul>
+          <pre><code class="javascript">// data_bags/admins/fxposter.json
+{ "id": "fxposter", "uid": 2007 }</code></pre>
+          <pre><code class="ruby"># cookbooks/users/recipes/default.rb
+data_bag("admins")
+# => ["fxposter"]
+
+data_bag("admins", "fxposter")
+# => { "id" =>  "fxposter", "uid" => 2007 }
+</code></pre>
+        </section>
+
+        <section>
+          <h2>Environments</h2>
+          <pre><code class="ruby">name "dev"
+description "The development environment"
+cookbook_versions  "couchdb" => "11.0.0"
+default_attributes "apache2" => {
+  "listen_ports" => [ "80", "443" ]
+}</code></pre>
+        </section>
+
+        <section>
+          <h1 style="margin-top: 25%">Tools</h1>
+        </section>
+
+        <section>
+          <h2>Chef Solo</h2>
+          <ul>
+            <li>Allows you to run Chef Cookbooks in the absence of a Chef Server</li>
+            <li>Upload your cookbooks to the server and run <code>chef-solo</code></li>
+            <li>Simplest solution [for Opscode]</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Chef Server</h2>
+          <ul>
+            <li>Central point for the distribution of Cookbooks, management and authentication of Nodes, and the use of Search</li>
+            <li>REST API</li>
+            <li>Web UI (Merb)</li>
+            <li>Difficult to setup (AMQP + Solr + CouchDB needed)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Chef Client</h2>
+          <ul>
+            <li>Communicates with the Chef Server via REST</li>
+            <li>Lives on Nodes</li>
+            <li>Compiles and executes Cookbooks</li>
+            <li>Similar to Chef Solo, but uses Chef Server instead of local directory</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Ohai</h2>
+          <ul>
+            <li>Detects data about your OS</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Knife</h2>
+          <ul>
+            <li>"powerful command-line interface that comes with Chef"</li>
+            <li>Managing cookbooks, roles, nodes, etc</li>
+            <li>Built for Chef Server...</li>
+          </ul>
+          <pre class="wider"><code class="no-highlight">** COOKBOOK COMMANDS **
+knife cookbook bulk delete REGEX (options)
+knife cookbook create COOKBOOK (options)
+knife cookbook delete COOKBOOK VERSION (options)
+knife cookbook download COOKBOOK [VERSION] (options)
+knife cookbook list (options)
+knife cookbook metadata COOKBOOK (options)
+knife cookbook metadata from FILE (options)
+knife cookbook show COOKBOOK [VERSION] [PART] [FILENAME] (options)
+knife cookbook test [COOKBOOKS...] (options)
+knife cookbook upload [COOKBOOKS...] (options)</code></pre>
+        </section>
+
+        <section>
+          <h1 style="margin-top: 25%">Practice</h1>
+        </section>
+
+        <section>
+          <h2>Chef</h2>
+          <pre><code class="no-highlight">gem install chef</code></pre>
+          <p><small>Will install everything chef needs, including <code>knife</code></small></p>
         </section>
 
         <section>
@@ -194,18 +449,42 @@ end</code></pre>
         </section>
 
         <section>
-          <h2>Adding cookbooks</h2>
-          <pre><code class="bash">gem install chef
-knife cookbook site install nginx -o cookbooks
+          <h2>Cookbooks</h2>
+          <ul>
+            <li><a href="https://github.com/opscode-cookbooks">https://github.com/opscode-cookbooks</a></li>
+            <li><a href="https://github.com/cookbooks">https://github.com/cookbooks</a></li>
+            <li><a href="http://community.opscode.com/cookbooks">http://community.opscode.com/cookbooks</a></li>
+            <li>...</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Community Cookbooks</h2>
+          <pre><code class="no-highlight">knife cookbook site install __cookbook__ -o cookbooks</code></pre>
+        </section>
+
+        <section>
+          <h2>Github Cookbooks</h2>
+          <pre><code class="no-highlight">gem install knife-github-cookbooks</code></pre>
+          <pre><code class="no-highlight">knife cookbook github install __user__/__repo__[/__commit__] \
+  -o /path/to/cookbooks</code></pre>
+        </section>
+
+        <section>
+          <h2>So</h2>
+          <pre><code class="bash">knife cookbook site install nginx -o cookbooks
 knife cookbook site install mysql -o cookbooks
-gem install knife-github-cookbooks
-knife cookbook github install fnichol/chef-rvm/v0.9.0 -o /path/to/cookbooks
-knife cookbook github install fnichol/chef-rvm_passenger/v0.8.2 -o /path/to/cookbooks</code></pre>
+knife cookbook github install fnichol/chef-rvm/v0.9.0 \
+  -o /path/to/cookbooks
+knife cookbook github install fnichol/chef-rvm_passenger/v0.8.2 \
+  -o /path/to/cookbooks
+knife cookbook create blog -o cookbooks</code></pre>
         </section>
 
         <section>
           <!-- <h2>Chef Repo</h2> -->
-          <pre><code class="ruby">name "rvm"
+          <pre><code class="ruby"># roles/rvm.rb
+name "rvm"
 description "rvm configuration for rails applcations deployment"
 default_attributes({
   :rvm => {
@@ -231,7 +510,7 @@ run_list "recipe[rvm::system]", "recipe[rvm_passenger::nginx]"
         </section>
 
         <section>
-          <h2>My App Cookbook</h2>
+          <h2>Blog Cookbook</h2>
           <h4>
             For now, it's difficult to properly deploy application with RVM using chef.
             You may use capistrano for deployment process.
@@ -255,7 +534,7 @@ nginx_site "blog"
 
 rails_application "blog" do
   deploy_to deploy_root
-  repository "git@github.com:my/blog.git"
+  repository "git@github.com:fxposter/blog.git"
   database "blog"
   symlinks "config/settings.yml" => "config/settings.yml"
   ruby "ruby-1.9.3-p194@blog"
@@ -263,38 +542,55 @@ end</code></pre>
         </section>
 
         <section>
-          <h2>Node lyfecycle</h2>
+          <h1 style="margin-top: 25%">Bootstrapping node</h1>
+        </section>
+
+        <section>
+          <h2>For Development</h2>
+          <img src="images/chef-04.png" style="background-color: #FFF;" class="fragment">
+          <h2 class="fragment">Vagrant</h2>
+        </section>
+
+        <section>
+          <h2>Vagrant</h2>
           <ul>
-            <li>
-              Bootstrap
-              <ul>
-                <li>for Chef Solo</li>
-                <li>for Chef Server</li>
-              </ul>
-            </li>
-            <li>
-              Provision
-              <ul>
-                <li>Manual</li>
-                <li>Automatic</li>
-              </ul>
-            </li>
+            <li>"Virtualized development made easy"</li>
+            <li>"Create and configure lightweight, reproducible, and portable development environments"</li>
+            <li>Uses VirtualBox VMs</li>
+            <li>A lot of pre-built base boxes</li>
+            <li>Chef Solo / Chef Client / Puppet support</li>
+            <li><a href="http://vagrantup.com">http://vagrantup.com</a></li>
           </ul>
         </section>
 
         <section>
-          <h1 style="margin-top: 25%">Bootstrap</h1>
+          <h2>For Production</h2>
+          <ul>
+            <li>Chef Solo</li>
+            <li>Chef Server + Chef Client</li>
+          </ul>
         </section>
 
         <section>
           <h2>Chef Solo</h2>
-          <pre><code class="bash">gem install knife-solo
+          <ul>
+            <li>Not as many useful tools as for Chef Client from Opscode</li>
+            <li>... but we have community</li>
+            <li><a href="https://github.com/matschaffer/knife-solo">https://github.com/matschaffer/knife-solo</a></li>
+            <li><a href="https://github.com/leonid-shevtsov/cuoco">https://github.com/leonid-shevtsov/cuoco</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>knife-solo</h2>
+          <pre><code class="no-highlight">gem install knife-solo
 knife kitchen my-chef-repo
 knife prepare fxposter@192.168.1.42
-echo '{ "run_list": ["role[rvm]", "recipe[mysql]", "recipe[my_app]"] }' > nodes/192.168.1.42.json
+
+echo '{ "run_list": ["role[rvm]", "recipe[mysql]", "recipe[blog]"] }' > nodes/192.168.1.42.json
+
 knife cook fxposter@192.168.1.42
 </code></pre>
-          <p><small>Or, you can look at <a href="https://github.com/leonid-shevtsov/cuoco">https://github.com/leonid-shevtsov/cuoco</a> by Leonid Shevtsov, which does basically the same thing.</small></p>
           <p><small>Do not use Chef Solo without one of these (or similar) tools - it's not worth it at all, if you will setup uploading cookbook to the server yourself.</small></p>
         </section>
 
@@ -307,85 +603,40 @@ knife cook fxposter@192.168.1.42
         </section>
 
         <section>
-          <h2>Differences</h2>
-          <ul>
-            <li>Chef Server provides a lot of APIs, for example, Search API</li>
-            <li>Chef Server solves problem of getting cookbook to your nodes</li>
-          </ul>
-        </section>
-
-        <section>
-          <h1 style="margin-top: 25%">Provision</h1>
-        </section>
-
-        <section>
-          <h2>Manual</h2>
-          <p>
-            Manually upload cookbooks to node with Chef Solo, or ssh to node and
-            run <code>chef-client</code> when using Chef Server.
-          </p>
-          <p><small>PS. Nobody really uses Chef Server with such configuration.</small></p>
-          <p><small>
-            PPS. Chef Solo in this configuration is very similar to Capistrano,
-            especially if you use chef deploy.
-          </small></p>
+          <h1 style="margin-top: 25%">Provisioning</h1>
         </section>
 
         <section>
           <h2>Automatic</h2>
-          <p>
-            Run <code>chef-client</code> every N minutes (usually 15),
-            or write a script for chef-solo, which would download repository and run it using cron.
-          </p>
-          <p><small>PS. I think, that in this configuration, Chef Server is the only way to go.</small></p>
+          <ul>
+            <li>Without user interaction</li>
+            <li>Every N (usually 15) minutes chef colo or chef client is run, and they'll do the rest</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Manual</h2>
+          <ul>
+            <li>User initiates provisioning on one or more nodes</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Which one?</h2>
+          <p>It's up to you</p>
+          <p>In big projects it's easy to forget to do something and automatic provisionin rules</p>
+          <p>For small projects it's easier to setup chef solo + knife solo and have no problems</p>
         </section>
 
         <section>
           <h2>Summary</h2>
-          <p>
-            Use Chef Server with automatic provisioning if you are a big company,
-            or have a big project, which needs lots of servers.
-          </p>
-          <p>
-            User Chef Solo with manual provisioning when you want to setup a couple of servers,
-            you will be able to switch to Chef Server later.
-          </p>
-        </section>
-
-        <section>
-          <h1 style="margin-top: 25%">One more thing...</h1>
-        </section>
-
-        <section>
-          <h2>Vagrant</h2>
-          <p>Create and configure lightweight, reproducible, and portable development environments.</p>
-          <p><small><a href="http://vagrantup.com/">http://vagrantup.com/</a></small></p>
-        </section>
-
-        <section>
-          <h2>Vagrant</h2>
-          <p>
-            If you want to get in touch with all described technologies,
-            especially Chef Solo - just use Vagrant, you will not need to setup anything,
-            Vagrant uses VirtualBox and there are a lot of VMs for it with
-            different operating systems, where Chef Solo will work out of the box.
-          </p>
-          <p>It is also awesome for testing your cookbooks.</p>
+          <p>If you can avoid server management - do it</p>
+          <p>If you can't - Chef is a good this to start with</p>
+          <img src="images/chef-03.jpg" width="400">
         </section>
 
         <section>
           <h1 style="margin-top: 25%">Thank you</h1>
-        </section>
-
-        <section>
-          <h2>Links</h2>
-          <ul>
-            <li><a href="http://wiki.opscode.com/display/chef/Home">http://wiki.opscode.com/display/chef/Home</a> - Chef Wiki</li>
-            <li><a href="http://vagrantup.com/">http://vagrantup.com/</a></li>
-            <li><a href="https://github.com/opscode-cookbooks">https://github.com/opscode-cookbooks</a> - cookbooks by Opscode, Chef's creators</li>
-            <li><a href="https://github.com/cookbooks">https://github.com/cookbooks</a> - community cookbooks</li>
-            <li><a href="http://community.opscode.com/cookbooks">http://community.opscode.com/cookbooks</a></li>
-          </ul>
         </section>
       </div>
 

@@ -929,3 +929,19 @@ body {
 .core-components img {
 	background-color: #FFFFFF !important;
 }
+
+.table {
+	width: 120%;
+	margin-top: 30px;
+	margin-left: -10%;
+}
+
+.table td {
+	text-align: center !important;
+	/*border: 1px solid #999;*/
+}
+
+
+pre.wider code {
+	width: 100%;
+}
